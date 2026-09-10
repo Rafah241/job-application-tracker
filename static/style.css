@@ -1,0 +1,368 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    color: #1f2937;
+    padding: 40px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 35px;
+}
+
+h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+/* Dashboard */
+
+.dashboard {
+    max-width: 1100px;
+    margin: 0 auto 35px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 18px;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+}
+
+.card h3 {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* Form */
+
+.form-container {
+    max-width: 850px;
+    margin: 0 auto 35px;
+    background: white;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: bold;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+/* Search */
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.search-form input {
+    flex: 1;
+}
+
+.search-form select {
+    width: 180px;
+}
+
+.search-form button {
+    width: 120px;
+}
+
+/* Application cards */
+
+.form-container > .card {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.form-container > .card h3 {
+    font-size: 19px;
+    color: #111827;
+}
+
+.form-container > .card p {
+    font-size: 15px;
+    font-weight: normal;
+    margin-top: 8px;
+}
+
+.form-container > .card a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.form-container > .card a:hover {
+    text-decoration: underline;
+}
+
+/* Mobile */
+
+@media (max-width: 900px) {
+
+    .dashboard {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    body {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+    .search-form select,
+    .search-form button {
+        width: 100%;
+    }
+}
+
+/* Application actions */
+
+.application-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.application-actions a {
+    flex: 1;
+}
+
+.application-actions form {
+    flex: 1;
+}
+
+.application-actions button {
+    width: 100%;
+}
+
+/* Status badges */
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.status-applied {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-assessment {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.status-interview {
+    background: #ede9fe;
+    color: #6b21a8;
+}
+
+.status-selected {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Chart */
+
+.chart-container {
+    max-width: 600px;
+    margin: 0 auto 35px;
+    padding: 30px;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+}
+
+.chart-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* Section header */
+
+.section-header {
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    margin-bottom: 5px;
+}
+
+.section-header p {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* Action buttons */
+
+.edit-btn {
+    background: #2563eb;
+}
+
+.edit-btn:hover {
+    background: #1d4ed8;
+}
+
+.delete-btn {
+    background: #dc2626;
+}
+
+.delete-btn:hover {
+    background: #b91c1c;
+}
+
+/* Clear filters button */
+
+.clear-btn {
+    width: 120px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #6b7280;
+    color: white !important;
+    text-align: center;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.clear-btn:hover {
+    background: #4b5563;
+    text-decoration: none !important;
+}
+
+/* Application card hover */
+
+.form-container > .card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-container > .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10);
+}
+
+/* Filter controls */
+
+.search-form {
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-form input {
+    min-width: 220px;
+}
+
+.search-form select {
+    width: 170px;
+}
+
+.search-form button,
+.search-form .clear-btn {
+    flex-shrink: 0;
+}
+
+/* Application count */
+
+.application-count {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+/* Job link button */
+
+.job-link-btn {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 9px 16px;
+    border-radius: 8px;
+    background: #eef2ff;
+    color: #2563eb !important;
+    text-decoration: none !important;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.job-link-btn:hover {
+    background: #e0e7ff;
+}
