@@ -1,5 +1,6 @@
 # Job Application Tracker
-![Job Application Tracker](./screenshot.png)
+
+![Job Application Tracker](Screenshot.png)
 
 A web-based Job Application Tracker built using Python Flask and SQLite.
 
@@ -33,8 +34,8 @@ A web-based Job Application Tracker built using Python Flask and SQLite.
 job-application-tracker/
 │
 ├── app.py
-├── jobs.db
 ├── README.md
+├── Screenshot.png
 │
 ├── templates/
 │   ├── index.html
