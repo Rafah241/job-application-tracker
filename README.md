@@ -1,4 +1,5 @@
 # Job Application Tracker
+![Job Application Tracker](Screenshot.png)
 
 A web-based Job Application Tracker built using Python Flask and SQLite.
 
