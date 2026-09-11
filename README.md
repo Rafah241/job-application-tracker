@@ -1,5 +1,5 @@
 # Job Application Tracker
-![Job Application Tracker](Screenshot.png)
+![Job Application Tracker](./screenshot.png)
 
 A web-based Job Application Tracker built using Python Flask and SQLite.
 
