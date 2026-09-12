@@ -1,7 +1,56 @@
 from flask import Flask, render_template, request, redirect
 import sqlite3
+import logging
+from datetime import datetime
+from urllib.parse import urlparse
 
 app = Flask(__name__)
+app.config["TESTING"] = False
+
+logging.basicConfig(
+    filename="application.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+logger = logging.getLogger(__name__)
+
+ALLOWED_STATUSES = {
+    "Applied",
+    "Assessment",
+    "Interview",
+    "Selected",
+    "Rejected"
+}
+
+
+def validate_application(company, role, date_applied, status, job_link):
+    errors = []
+
+    if not company.strip():
+        errors.append("Company name is required.")
+
+    if not role.strip():
+        errors.append("Job role is required.")
+
+    if not date_applied:
+        errors.append("Application date is required.")
+    else:
+        try:
+            datetime.strptime(date_applied, "%Y-%m-%d")
+        except ValueError:
+            errors.append("Application date must be valid.")
+
+    if status not in ALLOWED_STATUSES:
+        errors.append("Invalid application status.")
+
+    if job_link:
+        parsed_url = urlparse(job_link)
+
+        if parsed_url.scheme not in ("http", "https") or not parsed_url.netloc:
+            errors.append("Job link must be a valid URL.")
+
+    return errors
 
 
 def get_db_connection():
@@ -27,9 +76,6 @@ def create_table():
 
     conn.commit()
     conn.close()
-
-
-@app.route("/")
 
 @app.route("/")
 def home():
@@ -109,47 +155,69 @@ def home():
 
 @app.route("/add", methods=["POST"])
 def add_application():
+    company = request.form.get("company", "").strip()
+    role = request.form.get("role", "").strip()
+    date_applied = request.form.get("date_applied", "").strip()
+    status = request.form.get("status", "").strip()
+    job_link = request.form.get("job_link", "").strip()
+    notes = request.form.get("notes", "").strip()
 
-    company = request.form["company"]
-    role = request.form["role"]
-    date_applied = request.form["date_applied"]
-    status = request.form["status"]
-    job_link = request.form["job_link"]
-    notes = request.form["notes"]
-
-    conn = get_db_connection()
-
-    conn.execute("""
-        INSERT INTO applications
-        (company, role, date_applied, status, job_link, notes)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (
+    errors = validate_application(
         company,
         role,
         date_applied,
         status,
-        job_link,
-        notes
-    ))
+        job_link
+    )
 
-    conn.commit()
-    conn.close()
+    if errors:
+        for error in errors:
+            flash(error)
+        return redirect("/")
+
+    try:
+        conn = get_db_connection()
+
+        conn.execute("""
+            INSERT INTO applications
+            (company, role, date_applied, status, job_link, notes)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (company, role, date_applied, status, job_link, notes))
+
+        conn.commit()
+        conn.close()
+
+        logger.info(
+            f"Application added: company={company}, role={role}"
+        )
+
+    except sqlite3.Error as e:
+        logger.error(f"Database error while adding application: {e}")
+        flash("Unable to save application. Please try again.")
 
     return redirect("/")
 
 
 @app.route("/delete/<int:job_id>", methods=["POST"])
 def delete_application(job_id):
+    try:
+        conn = get_db_connection()
 
-    conn = get_db_connection()
+        conn.execute(
+            "DELETE FROM applications WHERE id = ?",
+            (job_id,)
+        )
 
-    conn.execute(
-        "DELETE FROM applications WHERE id = ?",
-        (job_id,)
-    )
+        conn.commit()
+        conn.close()
 
-    conn.commit()
-    conn.close()
+        logger.info(f"Application deleted: id={job_id}")
+
+    except sqlite3.Error as e:
+        logger.error(
+            f"Database error while deleting application id={job_id}: {e}"
+        )
+        flash("Unable to delete application. Please try again.")
 
     return redirect("/")
 
@@ -161,36 +229,75 @@ def edit_application(job_id):
 
     if request.method == "POST":
 
-        company = request.form["company"]
-        role = request.form["role"]
-        date_applied = request.form["date_applied"]
-        status = request.form["status"]
-        job_link = request.form["job_link"]
-        notes = request.form["notes"]
+        company = request.form.get("company", "").strip()
+        role = request.form.get("role", "").strip()
+        date_applied = request.form.get("date_applied", "").strip()
+        status = request.form.get("status", "").strip()
+        job_link = request.form.get("job_link", "").strip()
+        notes = request.form.get("notes", "").strip()
 
-        conn.execute("""
-            UPDATE applications
-            SET company = ?,
-                role = ?,
-                date_applied = ?,
-                status = ?,
-                job_link = ?,
-                notes = ?
-            WHERE id = ?
-        """, (
+        errors = validate_application(
             company,
             role,
             date_applied,
             status,
-            job_link,
-            notes,
-            job_id
-        ))
+            job_link
+        )
 
-        conn.commit()
-        conn.close()
+        if errors:
+            conn.close()
+
+            for error in errors:
+                flash(error)
+
+            return redirect(f"/edit/{job_id}")
+
+        try:
+            conn.execute("""
+                UPDATE applications
+                SET company = ?,
+                    role = ?,
+                    date_applied = ?,
+                    status = ?,
+                    job_link = ?,
+                    notes = ?
+                WHERE id = ?
+            """, (
+                company,
+                role,
+                date_applied,
+                status,
+                job_link,
+                notes,
+                job_id
+            ))
+
+            conn.commit()
+            conn.close()
+
+            logger.info("Application updated: id=%s", job_id)
+
+        except sqlite3.Error as e:
+            conn.close()
+
+            logger.error(
+                "Database error while updating application id=%s: %s",
+                job_id,
+                e
+            )
+
+            flash("Unable to update application. Please try again.")
 
         return redirect("/")
+
+    job = conn.execute(
+        "SELECT * FROM applications WHERE id = ?",
+        (job_id,)
+    ).fetchone()
+
+    conn.close()
+
+    return render_template("edit.html", job=job)
 
     job = conn.execute(
         "SELECT * FROM applications WHERE id = ?",
