@@ -41,7 +41,6 @@ job-application-tracker/
 ├── app.py
 ├── README.md
 ├── screenshot.png
-├── application.log
 │
 ├── templates/
 │   ├── index.html
